@@ -6,6 +6,7 @@
     >
       <li
         v-for="(tab, i) in state.tabs"
+        ref="tabButtons"
         :key="i"
         :class="[ navItemClass, tab.isDisabled ? navItemDisabledClass : '', tab.isActive ? navItemActiveClass : (!tab.isDisabled ? navItemInactiveClass : '') ]"
         role="presentation"
@@ -15,13 +16,19 @@
           :class="[ navItemLinkClass, tab.isDisabled ? navItemLinkDisabledClass : '', tab.isActive ? navItemLinkActiveClass : (!tab.isDisabled ? navItemLinkInactiveClass : '') ]"
           :aria-controls="tab.paneId"
           :aria-selected="tab.isActive"
+          :tabindex="!tab.isActive ? -1 : null"
           :href="tab.hash"
           @click="selectTab(tab.hash, $event)"
+          @keydown.right="nextTab(tab.hash, $event)"
+          @keydown.left="previousTab(tab.hash, $event)"
           v-html="tab.header"
         />
       </li>
     </ul>
-    <div :class="panelsWrapperClass">
+    <div
+      :class="panelsWrapperClass"
+      tabindex="0"
+    >
       <slot />
     </div>
   </div>
@@ -29,9 +36,13 @@
 
 <script setup lang="ts">
 import expiringStorage from "../expiringStorage"
-import { defineExpose, onMounted, provide, reactive, toRefs } from "vue"
+import { defineExpose, onMounted, provide, reactive, toRefs, ref } from "vue"
 import { Tab, TabsState } from "../types"
 import { AddTabKey, UpdateTabKey, DeleteTabKey, TabsProviderKey } from "../symbols"
+
+
+const tabButtons = ref([])
+
 
 const props = defineProps({
   cacheLifetime: {
@@ -119,6 +130,52 @@ provide(DeleteTabKey, (computedId) => {
 
   state.tabs.splice(tabIndex, 1)
 })
+
+const previousTab = (selectedTabHash: string, event?: Event): void => {
+  event.preventDefault()
+
+  const tabIndex = state.tabs.findIndex((tab) => tab.hash === selectedTabHash)
+  let previousTabIndex = tabIndex;
+  if (tabIndex > 0) {
+    // Find previous tab:
+    let i = tabIndex
+    while (i >= 0) {
+      previousTabIndex = i - 1
+      if (!state.tabs[previousTabIndex].isDisabled) {
+        break
+      }
+      i--
+    }
+  }
+  if (previousTabIndex >= 0) {
+    selectTab(state.tabs[previousTabIndex].hash, event)
+    tabButtons.value[previousTabIndex].querySelector("a[role=tab]").focus()
+  }
+}
+
+const nextTab = (selectedTabHash: string, event?: Event): void => {
+  event.preventDefault()
+
+  const tabIndex = state.tabs.findIndex((tab) => tab.hash === selectedTabHash)
+  let nextTabIndex = false;
+  if (tabIndex >= 0) {
+    // Find next tab:
+    let i = tabIndex
+    while (tabIndex + 1 < state.tabs.length) {
+      if (i + 1 < state.tabs.length) {
+        nextTabIndex = i + 1
+        if (!state.tabs[nextTabIndex].isDisabled) {
+          break
+        }
+      }
+      i++
+    }
+  }
+  if (nextTabIndex) {
+    selectTab(state.tabs[nextTabIndex].hash, event)
+    tabButtons.value[nextTabIndex].querySelector("a[role=tab]").focus()
+  }
+}
 
 const selectTab = (selectedTabHash: string, event?: Event): void => {
   if (event && !props.options.useUrlFragment) {
