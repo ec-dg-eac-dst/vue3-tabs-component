@@ -1,6 +1,6 @@
 {
   "name": "vue3-tabs-component-eac",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "A Vue component to easily render tabs, forked for A11Y reasons from jacobs63/vue3-tabs-component.git.",
   "homepage": "https://github.com/ec-dg-eac-dst/vue3-tabs-component",
   "bugs": {
@@ -14,14 +14,14 @@
   "author": "Jakub Potocký",
   "exports": {
     ".": {
-      "import": "./dist/vue3-tabs-component.mjs",
-      "require": "./dist/vue3-tabs-component.umd.js"
+      "import": "./dist/vue3-tabs-component-eac.mjs",
+      "require": "./dist/vue3-tabs-component-eac.umd.js"
     }
   },
-  "main": "./dist/vue3-tabs-component.umd.js",
-  "unpkg": "./dist/vue3-tabs-component.umd.js",
-  "module": "./dist/vue3-tabs-component.mjs",
-  "jsnext:main": "./dist/vue3-tabs-component.mjs",
+  "main": "./dist/vue3-tabs-component-eac.umd.js",
+  "unpkg": "./dist/vue3-tabs-component-eac.umd.js",
+  "module": "./dist/vue3-tabs-component-eac.mjs",
+  "jsnext:main": "./dist/vue3-tabs-component-eac.mjs",
   "typings": "./dist/index.d.ts",
   "files": [
     "dist"
