@@ -16,7 +16,7 @@
           :class="[ navItemLinkClass, tab.isDisabled ? navItemLinkDisabledClass : '', tab.isActive ? navItemLinkActiveClass : (!tab.isDisabled ? navItemLinkInactiveClass : '') ]"
           :aria-controls="tab.paneId"
           :aria-selected="tab.isActive"
-          :tabindex="!tab.isActive ? -1 : null"
+          :tabindex="!tab.isActive ? -1 : 0"
           :href="tab.hash"
           @click="selectTab(tab.hash, $event)"
           @keydown.right="nextTab(tab.hash, $event)"
@@ -132,7 +132,9 @@ provide(DeleteTabKey, (computedId) => {
 })
 
 const previousTab = (selectedTabHash: string, event?: Event): void => {
-  event.preventDefault()
+  if (event) {
+    event.preventDefault()
+  }
 
   const tabIndex = state.tabs.findIndex((tab) => tab.hash === selectedTabHash)
   let previousTabIndex = tabIndex;
@@ -148,16 +150,21 @@ const previousTab = (selectedTabHash: string, event?: Event): void => {
     }
   }
   if (previousTabIndex >= 0) {
-    selectTab(state.tabs[previousTabIndex].hash, event)
-    tabButtons.value[previousTabIndex].querySelector("a[role=tab]").focus()
+    selectTab(state.tabs[previousTabIndex].hash, event);
+    const focusAnchor: HTMLElement = ((tabButtons.value[previousTabIndex] as HTMLElement).querySelector("a[role=tab]") as HTMLElement);
+    if (focusAnchor) {
+      focusAnchor.focus()
+    }
   }
 }
 
 const nextTab = (selectedTabHash: string, event?: Event): void => {
-  event.preventDefault()
+  if (event) {
+    event.preventDefault()
+  }
 
   const tabIndex = state.tabs.findIndex((tab) => tab.hash === selectedTabHash)
-  let nextTabIndex = false;
+  let nextTabIndex = -1;
   if (tabIndex >= 0) {
     // Find next tab:
     let i = tabIndex
@@ -171,9 +178,12 @@ const nextTab = (selectedTabHash: string, event?: Event): void => {
       i++
     }
   }
-  if (nextTabIndex) {
+  if (nextTabIndex >= 0) {
     selectTab(state.tabs[nextTabIndex].hash, event)
-    tabButtons.value[nextTabIndex].querySelector("a[role=tab]").focus()
+    const focusAnchor: HTMLElement = ((tabButtons.value[nextTabIndex] as HTMLElement).querySelector("a[role=tab]") as HTMLElement);
+    if (focusAnchor) {
+      focusAnchor.focus()
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "vue3-tabs-component-eac",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A Vue component to easily render tabs, forked for A11Y reasons from jacobs63/vue3-tabs-component.git.",
   "homepage": "https://github.com/ec-dg-eac-dst/vue3-tabs-component",
   "bugs": {
